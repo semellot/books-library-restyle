@@ -40,6 +40,34 @@ def download_image(url, filename, folder='images/'):
     
     return filename
 
+def parse_book_page(book_page):
+    book = {}
+    soup = BeautifulSoup(book_page, 'lxml')
+    title_tag = soup.find('div', id='content').find('h1')
+    title_full = title_tag.text
+    title, author = title_full.split("::")
+    title = title.strip()
+    book['title'] = title
+    
+    image_short_url = soup.find('div', class_='bookimage').find('img')['src']
+    image_url = urljoin('https://tululu.org', image_short_url)
+    image_name = unquote(basename(urlsplit(image_url)[2]))
+    book['image_url'] = image_url
+    book['image_name'] = image_name
+    
+    comments = soup.find_all('div', class_='texts')
+    book['comments'] = []
+    for comment in comments:
+        comment_text = comment.find('span').text
+        book['comments'].append(comment_text)
+    
+    genres = soup.find('span', class_='d_book').find_all('a')
+    book['genres'] = []
+    for genre in genres:
+        genre_text = genre.text
+        book['genres'].append(genre_text)
+    
+    return book
 
 book_id = 1
 
@@ -51,30 +79,13 @@ while book_id <= 10:
         response.raise_for_status()
         check_for_redirect(response)
         
-        soup = BeautifulSoup(response.text, 'lxml')
-        title_tag = soup.find('div', id='content').find('h1')
-        title_full = title_tag.text
-        title, author = title_full.split("::")
-        title = title.strip()
-        print(f'Заголовок: {title}')
-        filename = f'{book_id}. {title}.txt'
+        book = parse_book_page(response.text)
+        
+        filename = f'{book_id}. {book["title"]}.txt'
         url = f'https://tululu.org/txt.php?id={book_id}'
-        # download_txt(url, filename)
+        download_txt(url, filename)
         
-        image_short_url = soup.find('div', class_='bookimage').find('img')['src']
-        image_url = urljoin('https://tululu.org', image_short_url)
-        image_name = unquote(basename(urlsplit(image_url)[2]))
-        download_image(image_url, image_name)
-        
-        comments = soup.find_all('div', class_='texts')
-        for comment in comments:
-            comment_text = comment.find('span').text
-            # print(comment_text)
-        
-        genres = soup.find('span', class_='d_book').find_all('a')
-        for genre in genres:
-            genre_text = genre.text
-            print(genre_text)
+        download_image(book['image_url'], book['image_name'])
 
     except requests.HTTPError:
         pass
