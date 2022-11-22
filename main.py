@@ -56,6 +56,7 @@ while book_id <= 10:
         title_full = title_tag.text
         title, author = title_full.split("::")
         title = title.strip()
+        print(f'Заголовок: {title}')
         filename = f'{book_id}. {title}.txt'
         url = f'https://tululu.org/txt.php?id={book_id}'
         # download_txt(url, filename)
@@ -68,7 +69,12 @@ while book_id <= 10:
         comments = soup.find_all('div', class_='texts')
         for comment in comments:
             comment_text = comment.find('span').text
-            print(comment_text)
+            # print(comment_text)
+        
+        genres = soup.find('span', class_='d_book').find_all('a')
+        for genre in genres:
+            genre_text = genre.text
+            print(genre_text)
 
     except requests.HTTPError:
         pass
