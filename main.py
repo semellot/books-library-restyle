@@ -1,3 +1,4 @@
+import argparse
 import os
 from os.path import basename
 from urllib.parse import urljoin, urlsplit, unquote
@@ -69,25 +70,27 @@ def parse_book_page(book_page):
     
     return book
 
-book_id = 1
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('start_id', nargs='?', type=int, default=1)
+    parser.add_argument('end_id', nargs='?', type=int, default=10)
+    args = parser.parse_args()
 
-while book_id <= 10:
-    try:
-        print('book', book_id)
-        url = f'https://tululu.org/b{book_id}/'
-        response = requests.get(url, allow_redirects=False)
-        response.raise_for_status()
-        check_for_redirect(response)
-        
-        book = parse_book_page(response.text)
-        
-        filename = f'{book_id}. {book["title"]}.txt'
-        url = f'https://tululu.org/txt.php?id={book_id}'
-        download_txt(url, filename)
-        
-        download_image(book['image_url'], book['image_name'])
+    for book_id in range(args.start_id, args.end_id+1):
+        try:
+            print('book', book_id)
+            url = f'https://tululu.org/b{book_id}/'
+            response = requests.get(url, allow_redirects=False)
+            response.raise_for_status()
+            check_for_redirect(response)
+            
+            book = parse_book_page(response.text)
+            print(book)
+            filename = f'{book_id}. {book["title"]}.txt'
+            url = f'https://tululu.org/txt.php?id={book_id}'
+            # download_txt(url, filename)
+            
+            download_image(book['image_url'], book['image_name'])
 
-    except requests.HTTPError:
-        pass
-
-    book_id += 1
+        except requests.HTTPError:
+            pass
