@@ -9,7 +9,6 @@ import requests
 
 
 def check_for_redirect(response):
-    # print("response.status_code:", response.status_code)
     if response.status_code == 302:
         raise requests.HTTPError()
 
@@ -34,12 +33,12 @@ def download_image(url, filename, folder='images/'):
     check_for_redirect(response)
     
     os.makedirs(folder, exist_ok=True)
-    # filename = sanitize_filename(filename)
     filename = os.path.join(folder, filename)
     with open(filename, 'wb') as file:
         file.write(response.content)
     
     return filename
+
 
 def parse_book_page(book_page):
     book = {}
@@ -70,6 +69,7 @@ def parse_book_page(book_page):
     
     return book
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('start_id', nargs='?', type=int, default=1)
@@ -78,17 +78,16 @@ if __name__ == "__main__":
 
     for book_id in range(args.start_id, args.end_id+1):
         try:
-            print('book', book_id)
             url = f'https://tululu.org/b{book_id}/'
             response = requests.get(url, allow_redirects=False)
             response.raise_for_status()
             check_for_redirect(response)
             
             book = parse_book_page(response.text)
-            print(book)
+            
             filename = f'{book_id}. {book["title"]}.txt'
             url = f'https://tululu.org/txt.php?id={book_id}'
-            # download_txt(url, filename)
+            download_txt(url, filename)
             
             download_image(book['image_url'], book['image_name'])
 

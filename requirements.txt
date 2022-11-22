@@ -1,1 +1,4 @@
-pathvalidate
+requests==2.27.*
+pathvalidate==2.5.*
+beautifulsoup4==4.11.*
+lxml==4.9.*
