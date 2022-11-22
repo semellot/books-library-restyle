@@ -43,29 +43,32 @@ def download_image(url, filename, folder='images/'):
 
 book_id = 1
 
-while book_id < 10:
+while book_id <= 10:
     try:
-        print("book", book_id)
+        print('book', book_id)
         url = f'https://tululu.org/b{book_id}/'
         response = requests.get(url, allow_redirects=False)
         response.raise_for_status()
         check_for_redirect(response)
         
         soup = BeautifulSoup(response.text, 'lxml')
-        title_tag = soup.find('div', id="content").find('h1')
+        title_tag = soup.find('div', id='content').find('h1')
         title_full = title_tag.text
         title, author = title_full.split("::")
         title = title.strip()
+        filename = f'{book_id}. {title}.txt'
+        url = f'https://tululu.org/txt.php?id={book_id}'
+        # download_txt(url, filename)
         
-        image_short_url = soup.find('div', class_="bookimage").find('img')['src']
+        image_short_url = soup.find('div', class_='bookimage').find('img')['src']
         image_url = urljoin('https://tululu.org', image_short_url)
         image_name = unquote(basename(urlsplit(image_url)[2]))
         download_image(image_url, image_name)
         
-        filename = f'{book_id}. {title}.txt'
-        
-        url = f'https://tululu.org/txt.php?id={book_id}'
-        # download_txt(url, filename)
+        comments = soup.find_all('div', class_='texts')
+        for comment in comments:
+            comment_text = comment.find('span').text
+            print(comment_text)
 
     except requests.HTTPError:
         pass
