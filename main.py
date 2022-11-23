@@ -72,8 +72,8 @@ def parse_book_page(book_page):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('start_id', nargs='?', type=int, default=1)
-    parser.add_argument('end_id', nargs='?', type=int, default=10)
+    parser.add_argument('start_id', help='Начало диапазона с id книги для скачивания', nargs='?', type=int, default=1)
+    parser.add_argument('end_id', help='Конец диапазона с id книги для скачивания', nargs='?', type=int, default=10)
     args = parser.parse_args()
 
     for book_id in range(args.start_id, args.end_id+1):
