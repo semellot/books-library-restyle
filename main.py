@@ -41,28 +41,32 @@ def download_image(url, filename, folder='images/'):
 
 
 def parse_book_page(book_page):
-    book = {}
     soup = BeautifulSoup(book_page, 'lxml')
     title_tag = soup.find('div', id='content').find('h1')
     title_full = title_tag.text
     title, author = title_full.split("::")
     title = title.strip()
-    book['title'] = title
     
     image_short_url = soup.find('div', class_='bookimage').find('img')['src']
     image_url = urljoin('https://tululu.org', image_short_url)
     image_name = unquote(basename(urlsplit(image_url)[2]))
-    book['image_url'] = image_url
-    book['image_name'] = image_name
     
     comments = soup.find_all('div', class_='texts')
-    book['comments'] = []
+
+    book = {
+        'title': title,
+        'image_url': image_url,
+        'image_name': image_name,
+        'comments': [],
+        'genres': []
+    }
+    
     for comment in comments:
         comment_text = comment.find('span').text
         book['comments'].append(comment_text)
     
     genres = soup.find('span', class_='d_book').find_all('a')
-    book['genres'] = []
+    
     for genre in genres:
         genre_text = genre.text
         book['genres'].append(genre_text)
