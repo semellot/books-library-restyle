@@ -40,7 +40,7 @@ def download_image(url, filename, folder='images/'):
     return filename
 
 
-def parse_book_page(book_page):
+def parse_book_page(book_page, url):
     soup = BeautifulSoup(book_page, 'lxml')
     title_tag = soup.find('div', id='content').find('h1')
     title_full = title_tag.text
@@ -48,7 +48,7 @@ def parse_book_page(book_page):
     title = title.strip()
     
     image_short_url = soup.find('div', class_='bookimage').find('img')['src']
-    image_url = urljoin('https://tululu.org', image_short_url)
+    image_url = urljoin(url, image_short_url)
     image_name = unquote(basename(urlsplit(image_url)[2]))
     
     comments = soup.find_all('div', class_='texts')
@@ -87,7 +87,7 @@ if __name__ == "__main__":
             response.raise_for_status()
             check_for_redirect(response)
             
-            book = parse_book_page(response.text)
+            book = parse_book_page(response.text, url)
             
             filename = f'{book_id}. {book["title"]}.txt'
             url = f'https://tululu.org/txt.php?id={book_id}'
