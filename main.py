@@ -52,24 +52,18 @@ def parse_book_page(book_page, url):
     image_name = unquote(basename(urlsplit(image_url)[2]))
     
     comments = soup.find_all('div', class_='texts')
-
+    comments = [comment.find('span').text for comment in comments]
+    
+    genres = soup.find('span', class_='d_book').find_all('a')
+    genres = [genre.text for genre in genres]
+    
     book = {
         'title': title,
         'image_url': image_url,
         'image_name': image_name,
-        'comments': [],
-        'genres': []
+        'comments': comments,
+        'genres': genres
     }
-    
-    for comment in comments:
-        comment_text = comment.find('span').text
-        book['comments'].append(comment_text)
-    
-    genres = soup.find('span', class_='d_book').find_all('a')
-    
-    for genre in genres:
-        genre_text = genre.text
-        book['genres'].append(genre_text)
     
     return book
 
