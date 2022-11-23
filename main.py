@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 from os.path import basename
 from urllib.parse import urljoin, urlsplit, unquote
@@ -91,6 +92,10 @@ if __name__ == "__main__":
             download_txt(url, filename, book_id)
             
             download_image(book['image_url'], book['image_name'])
-
+        
+        except requests.ConnectionError:
+            logging.info('Проблема подключения. Повторная попытка через 60 секунд.')
+            time.sleep(60)
+            continue
         except requests.HTTPError:
-            print('Неправильная ссылка на книгу')
+            logging.info(f'Страницы {url} нет на сайте.')
