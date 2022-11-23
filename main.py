@@ -93,4 +93,4 @@ if __name__ == "__main__":
             download_image(book['image_url'], book['image_name'])
 
         except requests.HTTPError:
-            pass
+            print('Неправильная ссылка на книгу')
