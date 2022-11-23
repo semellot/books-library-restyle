@@ -9,7 +9,7 @@ import requests
 
 
 def check_for_redirect(response):
-    if response.status_code == 302:
+    for resp in response.history:
         raise requests.HTTPError()
 
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     for book_id in range(args.start_id, args.end_id+1):
         try:
             url = f'https://tululu.org/b{book_id}/'
-            response = requests.get(url, allow_redirects=False)
+            response = requests.get(url)
             response.raise_for_status()
             check_for_redirect(response)
             
