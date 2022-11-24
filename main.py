@@ -24,8 +24,8 @@ def download_txt(url, filename, book_id, folder='books/'):
     
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
-    filename = os.path.join(folder, filename)
-    with open(filename, 'w') as file:
+    filepath = os.path.join(folder, filename)
+    with open(filepath, 'w') as file:
         file.write(response.text)
     
     return filename
@@ -37,8 +37,8 @@ def download_image(url, filename, folder='images/'):
     check_for_redirect(response)
     
     os.makedirs(folder, exist_ok=True)
-    filename = os.path.join(folder, filename)
-    with open(filename, 'wb') as file:
+    filepath = os.path.join(folder, filename)
+    with open(filepath, 'wb') as file:
         file.write(response.content)
     
     return filename
