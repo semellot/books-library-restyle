@@ -10,7 +10,7 @@ import requests
 
 
 def check_for_redirect(response):
-    for resp in response.history:
+    if response.history:
         raise requests.HTTPError()
 
 
