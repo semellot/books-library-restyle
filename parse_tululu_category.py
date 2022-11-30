@@ -10,6 +10,8 @@ if __name__ == "__main__":
     
     soup = BeautifulSoup(response.text, 'lxml')
     
-    book_href = soup.find('div', class_='bookimage').find('a')['href']
-    book_url = urljoin('https://tululu.org', book_href)
-    print(book_url)
+    books = soup.find_all('div', class_='bookimage')
+    for book in books:
+        book_href = book.find('a')['href']
+        book_url = urljoin('https://tululu.org', book_href)
+        print(book_url)
