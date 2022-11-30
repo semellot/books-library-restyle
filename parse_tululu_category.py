@@ -18,10 +18,11 @@ if __name__ == '__main__':
             response.raise_for_status()
             
             soup = BeautifulSoup(response.text, 'lxml')
-            
-            books_block = soup.find_all('div', class_='bookimage')
+            selector = 'div.bookimage'
+            books_block = soup.select(selector)
             for book_block in books_block:
-                book_href = book_block.find('a')['href']
+                selector = 'a'
+                book_href = book_block.select_one(selector)['href']
                 
                 url = urljoin('https://tululu.org', book_href)
                 response = requests.get(url)
