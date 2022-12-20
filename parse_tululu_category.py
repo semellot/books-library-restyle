@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 
@@ -10,8 +11,13 @@ from functions import check_for_redirect, download_txt, download_image,\
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Скачивание книг с сайта tululu')
+    parser.add_argument('--start_page', help='Начало диапазона страниц для скачивания книг', nargs='?', type=int, default=1)
+    parser.add_argument('--end_page', help='Конец диапазона страниц для скачивания книг', nargs='?', type=int, default=702)
+    args = parser.parse_args()
+    
     books = []
-    for page in range(1,5):
+    for page in range(args.start_page, args.end_page):
         try:
             url = f'https://tululu.org/l55/{page}'
             response = requests.get(url)
