@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import os
 
 from bs4 import BeautifulSoup
 import requests
@@ -14,6 +15,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Скачивание книг с сайта tululu')
     parser.add_argument('--start_page', help='Начало диапазона страниц для скачивания книг', nargs='?', type=int, default=1)
     parser.add_argument('--end_page', help='Конец диапазона страниц для скачивания книг', nargs='?', type=int, default=702)
+    parser.add_argument('--dest_folder', help='Путь к каталогу с картинками, книгами, JSON', nargs='?', default='.')
+    parser.add_argument('--skip_imgs', help='Не скачивать картинки', nargs='?', type=int, default=0)
+    parser.add_argument('--skip_txt', help='Не скачивать книги', nargs='?', type=int, default=0)
+    parser.add_argument('--json_path', help='Путь к json', nargs='?', default='.')
     args = parser.parse_args()
     
     books = []
@@ -37,13 +42,16 @@ if __name__ == '__main__':
                 
                 book = parse_book_page(response.text, url)
                 
-                filename = f'{book["title"]}.txt'
-                url = 'https://tululu.org/txt.php'
-                book_id = book_href.replace('/', '')
-                book_filename = download_txt(url, filename, book_id)
-                book['book_path'] = f'books/{book_filename}'
+                if not args.skip_txt:
+                    filename = f'{book["title"]}.txt'
+                    url = 'https://tululu.org/txt.php'
+                    book_id = book_href.replace('/', '')
+                    book_filename = download_txt(url, filename, book_id, f'{args.dest_folder}/books/')
+                    book['book_path'] = f'{args.dest_folder}/books/{book_filename}'
                 
-                download_image(book['image_url'], book['image_name'])
+                if not args.skip_imgs:
+                    print("args.skip_imgs",args.skip_imgs)
+                    download_image(book['image_url'], book['image_name'], f'{args.dest_folder}/images/')
                 
                 books.append(book)
                 
@@ -56,6 +64,7 @@ if __name__ == '__main__':
             logging.info(f'Страницы {url} нет на сайте.')
     
     # books_json = json.dumps(books, indent=4)
-    with open('books.json', 'w', encoding='utf8') as file:
+    os.makedirs(args.json_path, exist_ok=True)
+    with open(f'{args.json_path}/books.json', 'w', encoding='utf8') as file:
         json.dump(books, file, ensure_ascii=False, indent=4)
         # file.write(books_json)
