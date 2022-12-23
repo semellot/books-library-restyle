@@ -62,9 +62,9 @@ if __name__ == '__main__':
             continue
         except requests.HTTPError:
             logging.info(f'Запрашиваемой страницы нет на сайте.')
+            continue
     
     books_json = json.dumps(books, indent=4)
     os.makedirs(args.json_path, exist_ok=True)
     with open(f'{args.json_path}/books.json', 'w', encoding='utf8') as file:
         json.dump(books, file, ensure_ascii=False, indent=4)
-        file.write(books_json)
