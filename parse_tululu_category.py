@@ -24,8 +24,8 @@ if __name__ == '__main__':
     books = []
     for page in range(args.start_page, args.end_page):
         try:
-            url = f'https://tululu.org/l55/{page}'
-            response = requests.get(url)
+            category_url = f'https://tululu.org/l55/{page}'
+            response = requests.get(category_url)
             response.raise_for_status()
             check_for_redirect(response)
             
@@ -36,12 +36,12 @@ if __name__ == '__main__':
                 selector = 'a'
                 book_href = book_block.select_one(selector)['href']
                 
-                url = urljoin(url, book_href)
-                response = requests.get(url)
+                book_page_url = urljoin(category_url, book_href)
+                response = requests.get(book_page_url)
                 response.raise_for_status()
                 check_for_redirect(response)
                 
-                book = parse_book_page(response.text, url)
+                book = parse_book_page(response.text, book_page_url)
                 
                 if not args.skip_txt:
                     filename = f'{book["title"]}.txt'
@@ -61,7 +61,7 @@ if __name__ == '__main__':
             time.sleep(60)
             continue
         except requests.HTTPError:
-            logging.info(f'Страницы {url} нет на сайте.')
+            logging.info(f'Запрашиваемой страницы нет на сайте.')
     
     books_json = json.dumps(books, indent=4)
     os.makedirs(args.json_path, exist_ok=True)
