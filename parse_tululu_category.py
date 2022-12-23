@@ -36,7 +36,7 @@ if __name__ == '__main__':
                 selector = 'a'
                 book_href = book_block.select_one(selector)['href']
                 
-                url = urljoin('https://tululu.org', book_href)
+                url = urljoin(url, book_href)
                 response = requests.get(url)
                 response.raise_for_status()
                 check_for_redirect(response)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                 if not args.skip_txt:
                     filename = f'{book["title"]}.txt'
                     url = 'https://tululu.org/txt.php'
-                    book_id = book_href.replace('/', '')
+                    book_id = ''.join(filter(str.isnumeric, book_href))
                     book_filename = download_txt(url, filename, book_id, f'{args.dest_folder}/books/')
                     book['book_path'] = f'{args.dest_folder}/books/{book_filename}'
                 
