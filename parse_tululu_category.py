@@ -16,8 +16,8 @@ if __name__ == '__main__':
     parser.add_argument('--start_page', help='Начало диапазона страниц для скачивания книг', nargs='?', type=int, default=1)
     parser.add_argument('--end_page', help='Конец диапазона страниц для скачивания книг', nargs='?', type=int, default=702)
     parser.add_argument('--dest_folder', help='Путь к каталогу с картинками и книгами', nargs='?', default='.')
-    parser.add_argument('--skip_imgs', help='Не скачивать картинки', nargs='?', type=int, default=0)
-    parser.add_argument('--skip_txt', help='Не скачивать книги', nargs='?', type=int, default=0)
+    parser.add_argument('--skip_imgs', help='Не скачивать картинки', action="store_true")
+    parser.add_argument('--skip_txt', help='Не скачивать книги', action="store_true")
     parser.add_argument('--json_path', help='Путь к json', nargs='?', default='.')
     args = parser.parse_args()
     
