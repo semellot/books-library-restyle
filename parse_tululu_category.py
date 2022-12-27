@@ -2,6 +2,8 @@ import argparse
 import json
 import logging
 import os
+import time
+import sys
 
 from bs4 import BeautifulSoup
 import requests
@@ -22,7 +24,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     books = []
-    for page in range(args.start_page, args.end_page):
+    page = args.start_page
+    while page != args.end_page:
         try:
             category_url = f'https://tululu.org/l55/{page}'
             response = requests.get(category_url)
@@ -55,16 +58,16 @@ if __name__ == '__main__':
                 
                 books.append(book)
                 
-            
-        except requests.ConnectionError:
-            logging.info('Проблема подключения. Повторная попытка через 60 секунд.')
+            page += 1
+        except requests.exceptions.HTTPError as err:
+            print(err, file=sys.stderr)
+            page += 1
+            continue        
+        except requests.exceptions.ConnectionError as err:
+            print(err, file=sys.stderr)
             time.sleep(60)
             continue
-        except requests.HTTPError:
-            logging.info(f'Запрашиваемой страницы нет на сайте.')
-            continue
     
-    books_json = json.dumps(books, indent=4)
     os.makedirs(args.json_path, exist_ok=True)
     with open(f'{args.json_path}/books.json', 'w', encoding='utf8') as file:
         json.dump(books, file, ensure_ascii=False, indent=4)
