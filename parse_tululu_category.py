@@ -36,27 +36,37 @@ if __name__ == '__main__':
             selector = 'div.bookimage'
             books_block = soup.select(selector)
             for book_block in books_block:
-                selector = 'a'
-                book_href = book_block.select_one(selector)['href']
-                
-                book_page_url = urljoin(category_url, book_href)
-                response = requests.get(book_page_url)
-                response.raise_for_status()
-                check_for_redirect(response)
-                
-                book = parse_book_page(response.text, book_page_url)
-                
-                if not args.skip_txt:
-                    filename = f'{book["title"]}.txt'
-                    url = 'https://tululu.org/txt.php'
-                    book_id = ''.join(filter(str.isnumeric, book_href))
-                    book_filename = download_txt(url, filename, book_id, f'{args.dest_folder}/books/')
-                    book['book_path'] = f'{args.dest_folder}/books/{book_filename}'
-                
-                if not args.skip_imgs:
-                    download_image(book['image_url'], book['image_name'], f'{args.dest_folder}/images/')
-                
-                books.append(book)
+                while True:
+                    try:
+                        selector = 'a'
+                        book_href = book_block.select_one(selector)['href']
+                        
+                        book_page_url = urljoin(category_url, book_href)
+                        
+                        response = requests.get(book_page_url)
+                        response.raise_for_status()
+                        check_for_redirect(response)
+                        
+                        book = parse_book_page(response.text, book_page_url)
+                        
+                        if not args.skip_txt:
+                            filename = f'{book["title"]}.txt'
+                            url = 'https://tululu.org/txt.php'
+                            book_id = ''.join(filter(str.isnumeric, book_href))
+                            book_filename = download_txt(url, filename, book_id, f'{args.dest_folder}/books/')
+                            book['book_path'] = f'{args.dest_folder}/books/{book_filename}'
+                        
+                        if not args.skip_imgs:
+                            download_image(book['image_url'], book['image_name'], f'{args.dest_folder}/images/')
+                        
+                        books.append(book)
+                    except requests.exceptions.HTTPError as err:
+                        print(err, file=sys.stderr)
+                        break       
+                    except requests.exceptions.ConnectionError as err:
+                        print(err, file=sys.stderr)
+                        time.sleep(60)
+                        continue
                 
             page += 1
         except requests.exceptions.HTTPError as err:
