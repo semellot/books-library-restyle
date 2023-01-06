@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
@@ -23,7 +24,8 @@ def on_reload():
     os.makedirs('pages', exist_ok=True)
     
     for page, books_on_page in enumerate(chunked(books, 10), 1):
-        rendered_page = template.render(books=books_on_page)
+        count_pages = math.ceil(len(books)/10)
+        rendered_page = template.render(books=books_on_page, count_pages=count_pages, current_page=page)
         with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
