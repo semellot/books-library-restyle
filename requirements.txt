@@ -3,3 +3,4 @@ pathvalidate==2.5.*
 beautifulsoup4==4.11.*
 lxml==4.9.*
 Jinja2==3.1.2
+livereload==2.6.3
