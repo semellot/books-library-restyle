@@ -19,7 +19,7 @@
 ## Аргументы
 Для запуска скрипта используйте команду:
     ```shell
-    python python parse_tululu_category.py
+    python parse_tululu_category.py
     ```
 
 По умолчанию скачиваются книги со всех страниц категории фантастики.

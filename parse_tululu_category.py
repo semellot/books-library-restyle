@@ -60,6 +60,7 @@ if __name__ == '__main__':
                             download_image(book['image_url'], book['image_name'], f'{args.dest_folder}/images/')
                         
                         books.append(book)
+                        break       
                     except requests.exceptions.HTTPError as err:
                         print(err, file=sys.stderr)
                         break       
