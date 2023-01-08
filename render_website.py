@@ -9,6 +9,8 @@ from livereload import Server
 from more_itertools import chunked
 
 
+COUNT_BOOKS_ON_PAGE = 10
+
 def on_reload():
     parser = argparse.ArgumentParser()
     parser.add_argument('--json_path', help='Путь к json', nargs='?', default='books.json')
@@ -28,8 +30,8 @@ def on_reload():
     
     os.makedirs('pages', exist_ok=True)
     
-    for page, books_on_page in enumerate(chunked(books_descriptions, 10), 1):
-        count_pages = math.ceil(len(books)/10)
+    count_pages = math.ceil(len(books_descriptions)/COUNT_BOOKS_ON_PAGE)
+    for page, books_on_page in enumerate(chunked(books_descriptions, COUNT_BOOKS_ON_PAGE), 1):
         rendered_page = template.render(books=books_on_page, count_pages=count_pages, current_page=page)
         with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
