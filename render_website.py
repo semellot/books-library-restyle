@@ -36,8 +36,12 @@ def on_reload():
         with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
+def main():
+    on_reload()
+    server = Server()
+    server.watch('template.html', on_reload)
+    server.serve(root='.', default_filename='./pages/index1.html')
 
-on_reload()
-server = Server()
-server.watch('template.html', on_reload)
-server.serve(root='.', default_filename='./pages/index1.html')
+
+if __name__ == '__main__':
+    main()
