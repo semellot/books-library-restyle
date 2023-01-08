@@ -1,3 +1,4 @@
+import argparse
 import json
 import math
 import os
@@ -9,6 +10,10 @@ from more_itertools import chunked
 
 
 def on_reload():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json_path', help='Путь к json', nargs='?', default='books.json')
+    args = parser.parse_args()
+    
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
@@ -16,7 +21,7 @@ def on_reload():
 
     template = env.get_template('template.html')
     
-    with open("books.json", "r") as my_file:
+    with open(args.json_path, "r") as my_file:
         books_json = my_file.read()
     
     books = json.loads(books_json)
