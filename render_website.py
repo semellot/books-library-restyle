@@ -23,7 +23,7 @@ def on_reload():
 
     template = env.get_template('template.html')
     
-    with open(args.json_path, "r") as my_file:
+    with open(args.json_path, 'r') as my_file:
         books_json = my_file.read()
     
     books_descriptions = json.loads(books_json)
@@ -33,7 +33,7 @@ def on_reload():
     count_pages = math.ceil(len(books_descriptions)/COUNT_BOOKS_ON_PAGE)
     for page, books_on_page in enumerate(chunked(books_descriptions, COUNT_BOOKS_ON_PAGE), 1):
         rendered_page = template.render(books=books_on_page, count_pages=count_pages, current_page=page)
-        with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
+        with open(f'pages/index{page}.html', 'w', encoding='utf8') as file:
             file.write(rendered_page)
 
 def main():
