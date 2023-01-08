@@ -24,11 +24,11 @@ def on_reload():
     with open(args.json_path, "r") as my_file:
         books_json = my_file.read()
     
-    books = json.loads(books_json)
+    books_descriptions = json.loads(books_json)
     
     os.makedirs('pages', exist_ok=True)
     
-    for page, books_on_page in enumerate(chunked(books, 10), 1):
+    for page, books_on_page in enumerate(chunked(books_descriptions, 10), 1):
         count_pages = math.ceil(len(books)/10)
         rendered_page = template.render(books=books_on_page, count_pages=count_pages, current_page=page)
         with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
